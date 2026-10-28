@@ -7,9 +7,9 @@ st.set_page_config(page_title="Data Upload - K's Alpha Calculator", layout="wide
 
 st.title("Step 2: Upload Your Data")
 
-# Check prerequisites - user must have completed step 1 (either entered API key or skipped)
+# Check prerequisites - user must have completed step 1
 if st.session_state.app_state.get('current_step', 1) < 2:
-    st.warning("Please complete the Welcome page first (enter API key or click Skip).")
+    st.warning("Please complete the Welcome page first (click Get Started).")
     st.stop()
 
 st.markdown("""
@@ -146,48 +146,6 @@ else:
         st.session_state.app_state['upload_mode'] = 'single'
         st.session_state.app_state['columns'] = df.columns.tolist()
         st.session_state.app_state['n_rows'] = len(df)
-
-# LLM Analysis (if data uploaded and LLM available)
-if st.session_state.app_state.get('raw_dataframes') and st.session_state.app_state.get('llm_client'):
-    st.markdown("---")
-
-    if st.button("Analyze Data Structure with AI"):
-        with st.spinner("Analyzing data structure..."):
-            try:
-                # Get sample data for analysis
-                files = st.session_state.app_state['raw_dataframes']
-                first_file = list(files.values())[0]
-                first_file.seek(0)
-
-                if first_file.name.endswith('.csv'):
-                    df = pd.read_csv(first_file, nrows=10)
-                else:
-                    df = pd.read_excel(first_file, nrows=10)
-                first_file.seek(0)
-
-                from core.llm_client import analyze_data_structure
-
-                analysis = analyze_data_structure(
-                    st.session_state.app_state['llm_client'],
-                    df.to_string(),
-                    df.columns.tolist(),
-                )
-
-                st.session_state.app_state['data_analysis'] = analysis
-
-                st.success("Analysis complete!")
-
-                st.subheader("AI Analysis Results")
-                st.markdown(f"**Summary:** {analysis.get('summary', 'N/A')}")
-                st.markdown(f"**Detected Format:** {analysis.get('data_format', 'N/A')}")
-
-                if analysis.get('coded_variables'):
-                    st.markdown("**Detected Variables:**")
-                    for var in analysis['coded_variables']:
-                        st.markdown(f"- {var['name']} ({var['suggested_level']}): {var.get('reason', '')}")
-
-            except Exception as e:
-                st.error(f"Analysis failed: {str(e)}")
 
 # Navigation
 st.markdown("---")

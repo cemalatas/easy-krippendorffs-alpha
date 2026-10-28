@@ -77,52 +77,8 @@ sections = st.multiselect(
 
 st.markdown("---")
 
-# Generate report
-if st.button("Generate Report", type="primary", use_container_width=True):
-    with st.spinner("Generating comprehensive report..."):
-        try:
-            from core.krippendorff import results_summary, interpret_alpha
-
-            # Build results summary
-            summary = results_summary(per_var, pairwise_overall, coder_impact)
-
-            # Study metadata
-            metadata = {
-                "Study Name": study_name,
-                "Codebook": codebook_name,
-                "Number of Coders": str(coder_data.n_coders),
-                "Number of Units": str(coder_data.n_units),
-                "Number of Variables": str(len(coder_data.variables)),
-                "Coding Procedure": coding_procedure,
-                "Training": training_description,
-            }
-
-            # Generate report using LLM
-            if st.session_state.app_state.get('llm_client'):
-                from core.llm_client import generate_report
-
-                report = generate_report(
-                    st.session_state.app_state['llm_client'],
-                    summary,
-                    metadata,
-                )
-            else:
-                # Fallback: generate basic report without LLM
-                report = generate_basic_report(
-                    metadata, per_var, pairwise_overall, coder_impact, overall_alpha
-                )
-
-            st.session_state.app_state['generated_report'] = report
-            st.success("Report generated successfully!")
-
-        except Exception as e:
-            st.error(f"Report generation failed: {str(e)}")
-            import traceback
-            st.code(traceback.format_exc())
-
-
 def generate_basic_report(metadata, per_var, pairwise_overall, coder_impact, overall_alpha):
-    """Generate a basic report without LLM."""
+    """Generate the reliability report."""
     from core.krippendorff import interpret_alpha
 
     lines = [
@@ -164,6 +120,34 @@ def generate_basic_report(metadata, per_var, pairwise_overall, coder_impact, ove
     ])
 
     return "\n".join(lines)
+
+
+# Generate report
+if st.button("Generate Report", type="primary", use_container_width=True):
+    with st.spinner("Generating comprehensive report..."):
+        try:
+            # Study metadata
+            metadata = {
+                "Study Name": study_name,
+                "Codebook": codebook_name,
+                "Number of Coders": str(coder_data.n_coders),
+                "Number of Units": str(coder_data.n_units),
+                "Number of Variables": str(len(coder_data.variables)),
+                "Coding Procedure": coding_procedure,
+                "Training": training_description,
+            }
+
+            report = generate_basic_report(
+                metadata, per_var, pairwise_overall, coder_impact, overall_alpha
+            )
+
+            st.session_state.app_state['generated_report'] = report
+            st.success("Report generated successfully!")
+
+        except Exception as e:
+            st.error(f"Report generation failed: {str(e)}")
+            import traceback
+            st.code(traceback.format_exc())
 
 
 # Display report

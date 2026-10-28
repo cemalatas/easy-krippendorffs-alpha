@@ -141,32 +141,6 @@ if filtered:
     styled_df = df.style.apply(highlight_disagreement, axis=1)
     st.dataframe(styled_df, use_container_width=True, hide_index=True)
 
-    # LLM Analysis of selected disagreement
-    st.markdown("---")
-    st.subheader("Analyze Specific Disagreement")
-
-    selected_unit = st.selectbox(
-        "Select a unit to analyze:",
-        options=[d.unit_id for d in filtered[:50]],  # Limit to first 50
-    )
-
-    if selected_unit and st.session_state.app_state.get('llm_client'):
-        selected_disag = next((d for d in filtered if d.unit_id == selected_unit), None)
-
-        if selected_disag and st.button("Analyze This Disagreement"):
-            with st.spinner("Analyzing..."):
-                from core.llm_client import analyze_disagreement
-
-                analysis = analyze_disagreement(
-                    st.session_state.app_state['llm_client'],
-                    selected_disag.unit_id,
-                    selected_disag.variable,
-                    selected_disag.coder_values,
-                )
-
-                st.markdown("### Analysis")
-                st.markdown(analysis)
-
 else:
     st.info("No disagreements match the current filters.")
 

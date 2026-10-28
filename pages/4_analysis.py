@@ -202,28 +202,6 @@ if st.session_state.app_state.get('analysis_complete'):
             help="Units with coder disagreement",
         )
 
-    # Quick interpretation
-    if st.session_state.app_state.get('llm_client'):
-        with st.expander("AI Interpretation", expanded=True):
-            if st.button("Generate Interpretation"):
-                with st.spinner("Generating interpretation..."):
-                    from core.krippendorff import results_summary
-
-                    summary = results_summary(
-                        per_var,
-                        st.session_state.app_state['pairwise_overall'],
-                        st.session_state.app_state['coder_impact'],
-                    )
-
-                    response = st.session_state.app_state['llm_client'].call_with_context(
-                        "Provide a brief interpretation of these reliability results. "
-                        "Highlight key findings, areas of concern, and recommendations.",
-                        summary,
-                        system_prompt="educational_companion",
-                    )
-
-                    st.markdown(response)
-
     # Per-variable preview
     st.subheader("Per-Variable Results Preview")
     st.caption("Compare individual Alpha values with ReCal for verification (use 6-decimal values).")

@@ -306,7 +306,7 @@ def results_summary(
         coder_impact: Coder impact results
 
     Returns:
-        Summary text for LLM context
+        Summary text
     """
     overall = compute_overall_alpha(per_variable_results)
 

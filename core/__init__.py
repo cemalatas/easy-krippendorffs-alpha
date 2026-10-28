@@ -1,7 +1,6 @@
 """Core computation modules for Krippendorff's Alpha calculator."""
 
 from .models import CoderData, AlphaResult, Disagreement, PairwiseResult
-from .llm_client import LLMClient, get_chat_response
 from .data_transformer import transform_to_coder_data, detect_format
 from .krippendorff import (
     compute_alpha,
@@ -23,8 +22,6 @@ __all__ = [
     'AlphaResult',
     'Disagreement',
     'PairwiseResult',
-    'LLMClient',
-    'get_chat_response',
     'transform_to_coder_data',
     'detect_format',
     'compute_alpha',

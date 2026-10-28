@@ -1,6 +1,6 @@
 # Krippendorff's Alpha Calculator
 
-A comprehensive Streamlit web application for computing intercoder reliability statistics, with a focus on Krippendorff's Alpha. This tool serves as both a calculator and an educational platform, featuring AI-powered explanations via Claude.
+A comprehensive Streamlit web application for computing intercoder reliability statistics, with a focus on Krippendorff's Alpha. This tool serves as both a calculator and an educational platform.
 
 ## What This App Does
 
@@ -20,7 +20,6 @@ This application calculates intercoder reliability statistics for content analys
 ### Key Features
 
 - **7-Step Wizard Interface**: Guided workflow from data upload to report generation
-- **AI-Powered Explanations**: Claude Opus 4.5 provides contextual explanations and interpretations
 - **Per-Row Disagreement Detection**: Identifies exactly where coders disagree
 - **Coder Impact Analysis**: Shows how each coder affects overall reliability
 - **Interactive Visualizations**: Heatmaps, bar charts, and confusion matrices
@@ -34,7 +33,7 @@ This application calculates intercoder reliability statistics for content analys
 
 | Step | Page | Description |
 |------|------|-------------|
-| 1 | **Welcome** | Enter Anthropic API key for AI features |
+| 1 | **Welcome** | Introduction to intercoder reliability |
 | 2 | **Data Upload** | Upload coder files (XLSX/CSV) |
 | 3 | **Configure Variables** | Select unit ID column and coded variables |
 | 4 | **Run Analysis** | Compute all reliability statistics |
@@ -46,7 +45,7 @@ This application calculates intercoder reliability statistics for content analys
 
 ```
 kalpha_streamlit/
-├── app.py                      # Main entry point & sidebar chat
+├── app.py                      # Main entry point
 ├── requirements.txt            # Python dependencies
 ├── README.md                   # This file
 │
@@ -55,8 +54,7 @@ kalpha_streamlit/
 │   ├── krippendorff.py         # Alpha calculations
 │   ├── additional_stats.py     # Kappa, percent agreement
 │   ├── disagreement_analyzer.py # Per-row disagreement detection
-│   ├── data_transformer.py     # Data loading and transformation
-│   └── llm_client.py           # Claude API integration
+│   └── data_transformer.py     # Data loading and transformation
 │
 ├── visualization/              # Chart generation
 │   └── charts.py               # Plotly visualizations
@@ -110,20 +108,6 @@ Most content analysis variables are **nominal** or **ordinal**.
 
 ---
 
-## AI Features (Requires Anthropic API Key)
-
-The app integrates Claude Opus 4.5 (`claude-opus-4-5-20251101`) for:
-
-1. **Data Structure Analysis**: AI analyzes your uploaded data and suggests variable configurations
-2. **Results Interpretation**: Contextual explanations of reliability statistics
-3. **Disagreement Analysis**: AI explains why specific disagreements might have occurred
-4. **Report Generation**: AI-written executive summaries based on Krippendorff's methodology
-5. **Sidebar Chat**: Ask questions about your results or intercoder reliability concepts
-
-**Note**: The API key is stored in session state only (not saved to disk).
-
----
-
 ## Interpreting Results
 
 ### Krippendorff's Alpha Thresholds
@@ -153,7 +137,6 @@ krippendorff>=0.8.0
 scikit-learn>=1.3.0
 statsmodels>=0.14.0
 plotly>=5.18.0
-anthropic>=0.40.0
 python-docx>=1.1.0
 pdfplumber>=0.10.0
 reportlab>=4.0.0

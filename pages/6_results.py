@@ -65,22 +65,6 @@ with tab1:
         problems = sum(1 for r in per_var if r.alpha_all_coders < 0.67)
         st.metric("Problem Variables", f"{problems}")
 
-    # LLM interpretation
-    if st.session_state.app_state.get('llm_client'):
-        with st.expander("AI Summary", expanded=True):
-            if 'overview_interpretation' not in st.session_state:
-                from core.krippendorff import results_summary
-                summary = results_summary(per_var, pairwise_overall, coder_impact)
-
-                response = st.session_state.app_state['llm_client'].call_with_context(
-                    "Provide a 2-3 paragraph executive summary of these reliability results. "
-                    "Focus on overall quality, key concerns, and actionable insights.",
-                    summary,
-                )
-                st.session_state['overview_interpretation'] = response
-
-            st.markdown(st.session_state['overview_interpretation'])
-
     # Distribution chart
     st.subheader("Alpha Value Distribution")
     fig = plot_per_variable_alpha(per_var)
@@ -211,24 +195,6 @@ with tab4:
     } for c in coder_impact])
 
     st.dataframe(coder_df, use_container_width=True, hide_index=True)
-
-    # LLM interpretation
-    if st.session_state.app_state.get('llm_client'):
-        with st.expander("AI Analysis of Coder Performance"):
-            if st.button("Analyze Coder Performance"):
-                with st.spinner("Analyzing..."):
-                    coder_summary = "\n".join([
-                        f"- {c.coder}: mean delta {c.mean_delta_when_removed:+.3f}, "
-                        f"improves {c.num_vars_removal_increases_alpha} vars when removed"
-                        for c in coder_impact
-                    ])
-
-                    response = st.session_state.app_state['llm_client'].call(
-                        f"Analyze this coder impact data and provide specific recommendations:\n\n{coder_summary}",
-                        system_prompt="educational_companion",
-                    )
-
-                    st.markdown(response)
 
 with tab5:
     st.header("Additional Statistics")

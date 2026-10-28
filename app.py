@@ -1,6 +1,6 @@
 """
 Krippendorff's Alpha Educational Calculator
-A Streamlit app for calculating intercoder reliability with LLM-guided education.
+A Streamlit app for calculating intercoder reliability.
 """
 
 import streamlit as st
@@ -15,10 +15,6 @@ st.set_page_config(
 # Initialize session state
 if 'app_state' not in st.session_state:
     st.session_state.app_state = {
-        # Auth
-        'api_key': None,
-        'llm_client': None,
-
         # Data
         'raw_dataframes': {},
         'coder_data': None,
@@ -38,69 +34,10 @@ if 'app_state' not in st.session_state:
         # Report
         'generated_report': None,
 
-        # Chat
-        'chat_history': [],
-
         # Navigation
         'current_step': 1,
         'analysis_complete': False,
     }
-
-if 'chat_input_key' not in st.session_state:
-    st.session_state.chat_input_key = 0
-
-
-def render_sidebar_chat():
-    """Render the sidebar chat for Q&A with Claude."""
-    st.sidebar.markdown("---")
-    st.sidebar.subheader("Ask Claude")
-
-    if st.session_state.app_state['api_key'] is None:
-        st.sidebar.info("Enter your API key on the Welcome page to enable chat.")
-        return
-
-    # Chat input
-    user_question = st.sidebar.text_input(
-        "Ask a question about reliability analysis:",
-        key=f"chat_input_{st.session_state.chat_input_key}",
-        placeholder="e.g., What is a good alpha value?"
-    )
-
-    if st.sidebar.button("Ask", key="ask_button"):
-        if user_question.strip():
-            from core.llm_client import get_chat_response
-
-            with st.sidebar.spinner("Thinking..."):
-                response = get_chat_response(
-                    st.session_state.app_state['llm_client'],
-                    user_question,
-                    st.session_state.app_state['chat_history']
-                )
-
-            # Add to history
-            st.session_state.app_state['chat_history'].append({
-                'role': 'user',
-                'content': user_question
-            })
-            st.session_state.app_state['chat_history'].append({
-                'role': 'assistant',
-                'content': response
-            })
-
-            # Increment key to clear input
-            st.session_state.chat_input_key += 1
-            st.rerun()
-
-    # Display chat history (most recent first, limited to last 6)
-    if st.session_state.app_state['chat_history']:
-        st.sidebar.markdown("**Recent Q&A:**")
-        history = st.session_state.app_state['chat_history'][-6:]
-
-        for i in range(len(history) - 1, -1, -2):
-            if i >= 1:
-                with st.sidebar.expander(f"Q: {history[i-1]['content'][:50]}...", expanded=False):
-                    st.markdown(f"**Q:** {history[i-1]['content']}")
-                    st.markdown(f"**A:** {history[i]['content']}")
 
 
 def render_progress_indicator():
@@ -135,7 +72,7 @@ Welcome to the **Intercoder Reliability Educational Platform**!
 
 This tool helps you:
 - **Calculate** Krippendorff's Alpha and other reliability statistics
-- **Understand** what your results mean through LLM-guided explanations
+- **Understand** what your results mean with interpretation guidelines
 - **Explore** disagreements between coders in detail
 - **Generate** comprehensive reports grounded in methodology
 
@@ -143,7 +80,7 @@ This tool helps you:
 
 Use the **sidebar navigation** to move through the steps:
 
-1. **Welcome** - Enter your API key and learn about reliability
+1. **Welcome** - Learn about intercoder reliability
 2. **Data Upload** - Upload your coded data files
 3. **Configure Variables** - Set up your variables and measurement levels
 4. **Run Analysis** - Compute all reliability statistics
@@ -157,4 +94,3 @@ Use the **sidebar navigation** to move through the steps:
 
 # Render sidebar components
 render_progress_indicator()
-render_sidebar_chat()
